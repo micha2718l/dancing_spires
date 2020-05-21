@@ -1,6 +1,2 @@
 numpy
-scipy
-matplotlib
-jupyter_contrib_nbextensions
-yapf
-isort
+Pillow
