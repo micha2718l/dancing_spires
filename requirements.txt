@@ -1,3 +1,5 @@
 numpy
 Pillow
 jupyter_contrib_nbextensions
+isort
+yapf
