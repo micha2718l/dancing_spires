@@ -26,7 +26,7 @@ def doom_spire_lightning_custom():
     duration = request.args.get('duration', default = ds.duration_default, type = int)
     setup = request.json if request.json else ds.default_setup
 
-    images = ds.SpireDanceV1(frames=frames, width=width, height=height, **setup).images()
+    images = ds.SpireDanceV2(frames=frames, width=width, height=height, **setup)
 
     file_name = "spire_dance_custom.gif"
 

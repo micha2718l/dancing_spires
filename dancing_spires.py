@@ -26,16 +26,55 @@ default_setup = {
     ]
 }
 
-@dataclass
-class Spire():
-    spire_height: float = 0.75
-    spire_base_width: float = 0.5
-    spire_base_center: float = 0.5
-    base_wiggle: float = 1
-    x_wiggle: float = 1
-    y_wiggle: float = 1
-    width: int = width_default
-    height: int = height_default
+default_setupV2 = {
+    'functions': [
+        {'name': 's1',
+         'function': 'sin',
+         'frequency': 1,
+         'phase': 0},
+        {'name': 's2',
+         'function': 'sin',
+         'frequency': 2,
+         'phase': 0},
+        {'name': 's3',
+         'function': 'sin',
+         'frequency': 3,
+         'phase': 0}
+    ],
+    'spires': [
+        {
+            'base_wiggle': [0, None, None],
+            #'x_wiggle': [1, 's1', None],
+            #'y_wiggle': [1, 's2', None],
+            'spire_base_width': [0.3, None, None],
+            'spire_base_center': [0.5, None, None],
+            'spire_base_center': [0.2, None, None],
+            'spire_height': [0.5, 's1', None]
+        }
+    ]
+}
+
+class Spire:
+
+    def __init__(self,
+                 spire_height = 0.75,
+                 spire_base_width = 0.5,
+                 spire_base_center = 0.5,
+                 base_wiggle = 1,
+                 x_wiggle = 1,
+                 y_wiggle = 1,
+                 width = width_default,
+                 height = height_default,
+                 **kwargs
+                ):
+        self.spire_height = spire_height
+        self.spire_base_width = spire_base_width
+        self.spire_base_center = spire_base_center
+        self.base_wiggle = base_wiggle
+        self.x_wiggle = x_wiggle
+        self.y_wiggle = y_wiggle
+        self.width = width
+        self.height = height
 
     def polygon(self):
         spire_base_width_new = self.spire_base_width + self.base_wiggle * self.spire_base_width * 0.25
@@ -44,6 +83,41 @@ class Spire():
         base_1 = ((self.spire_base_center + spire_base_width_new / 2) * self.width,
                   0)
         wiggle_x = self.x_wiggle * 50
+        wiggle_y = self.y_wiggle * 25
+
+        top = (self.spire_base_center * self.width + wiggle_x,
+               self.spire_height * self.height + wiggle_y)
+        return [base_0, top, base_1]
+
+class SpireV2:
+
+    def __init__(self,
+                 spire_height = 0.75,
+                 spire_base_width = 0.5,
+                 spire_base_center = 0.5,
+                 base_wiggle = 0,
+                 x_wiggle = 0,
+                 y_wiggle = 0,
+                 width = width_default,
+                 height = height_default,
+                 **kwargs
+                ):
+        self.spire_height = spire_height
+        self.spire_base_width = spire_base_width
+        self.spire_base_center = spire_base_center
+        self.base_wiggle = base_wiggle
+        self.x_wiggle = x_wiggle
+        self.y_wiggle = y_wiggle
+        self.width = width
+        self.height = height
+
+    def polygon(self):
+        spire_base_width_new = self.spire_base_width + self.base_wiggle * self.spire_base_width * 0.25
+        base_0 = ((self.spire_base_center - spire_base_width_new / 2) * self.width,
+                  0)
+        base_1 = ((self.spire_base_center + spire_base_width_new / 2) * self.width,
+                  0)
+        wiggle_x = self.x_wiggle * self.width
         wiggle_y = self.y_wiggle * 25
 
         top = (self.spire_base_center * self.width + wiggle_x,
@@ -81,40 +155,68 @@ class Lightning():
             l_poly.append((x - 10, self.height - y))
         return l_poly
 
+def SpireDanceV2(frames=frames_default, width=width_default, height=height_default, setup=default_setupV2, **kwargs):
+
+    spires = setup.get('spires', [])
+    images = []
+
+    for i in range(0, frames):
+        N = (i / frames)
+        functions = {}
+        for f in setup.get('functions', []):
+            if f['function'] == 'sin':
+                functions[f['name']] = np.sin(f.get('frequency', 1) * N * 2 * np.pi + f.get('phase', 0)) / 2
+        #print(functions)
+        
+        sin_N = np.sin(2 * N * 2 * np.pi)
+        sin_N3 = np.sin(2 * 3 * N * 2 * np.pi)
+        sin_N5 = np.sin(7 * N * 2 * np.pi)
+
+        if (i % 2 == 0 and i % 5 == 0):
+            color = color_lightning
+        else:
+            color = color_bg
+
+        im = Image.new('RGB', (width, height), color)
+        draw = ImageDraw.Draw(im)
+        hue = int(360 * (sin_N + 1) / 2)
+
+        for spire in spires:
+            #print(spire)
+            if 'x_wiggle' in spire:
+                x_wiggle = functions.get(spire['x_wiggle'][1], 1) * spire['x_wiggle'][0]
+                print(x_wiggle)
+            else:
+                x_wiggle = 0
+            if 'y_wiggle' in spire:
+                y_wiggle = spire['y_wiggle'][0] * functions.get(spire['y_wiggle'][1], 1)
+            else:
+                y_wiggle = 0
+            if 'spire_height' in spire:
+                spire_height = spire['spire_height'][0] + functions.get(spire['spire_height'][1], 1) * spire['spire_height'][0]
+            else:
+                spire_height = None
+            '''if 'x_wiggle' in spire:
+                x_wiggle = spire['x_wiggle'][0] * functions.get(spire['x_wiggle'][1], 1)
+            else:
+                x_wiggle = 0
+            if 'x_wiggle' in spire:
+                x_wiggle = spire['x_wiggle'][0] * functions.get(spire['x_wiggle'][1], 1)
+            else:
+                x_wiggle = 0
+            if 'x_wiggle' in spire:
+                x_wiggle = spire['x_wiggle'][0] * functions.get(spire['x_wiggle'][1], 1)
+            else:
+                x_wiggle = 0'''
+
+            s = SpireV2(width=width, height=height, x_wiggle=x_wiggle, y_wiggle=y_wiggle, spire_height=spire_height, )
+            draw.polygon(s.polygon(), fill=f"hsl({hue}, 50%, 50%)")
+
+        images.append(im.rotate(180))
+    return images
+
 @dataclass
 class SpireDanceV1():
-    frames: int = frames_default
-    width: int = width_default
-    height: int = height_default
-    spires: List[Dict] = field(default_factory=lambda: default_setup['spires'])
-
-    def images(self):
-        images = []
-
-        for i in range(0, self.frames):
-            N = (i / self.frames)
-            sin_N = np.sin(2 * N * 2 * np.pi)
-            sin_N3 = np.sin(2 * 3 * N * 2 * np.pi)
-            sin_N5 = np.sin(7 * N * 2 * np.pi)
-
-            if (i % 2 == 0 and i % 5 == 0):
-                color = color_lightning
-            else:
-                color = color_bg
-
-            im = Image.new('RGB', (self.width, self.height), color)
-            draw = ImageDraw.Draw(im)
-            hue = int(360 * (sin_N + 1) / 2)
-
-            for spire in self.spires:
-                s = Spire(width=self.width, height=self.height, **spire)
-                draw.polygon(s.polygon(), fill=f"hsl({hue}, 50%, 50%)")
-
-            images.append(im.rotate(180))
-        return images
-
-@dataclass
-class SpireDanceV2():
     frames: int = frames_default
     width: int = width_default
     height: int = height_default
