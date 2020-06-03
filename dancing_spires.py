@@ -43,12 +43,19 @@ default_setupV2 = {
     ],
     'spires': [
         {
+            'base_wiggle': [0, 's3', None],
+            #'x_wiggle': [1, 's1', None],
+            #'y_wiggle': [1, 's2', None],
+            'spire_base_width': [0.3, None, None],
+            'spire_base_center': [0.75, None, None],
+            'spire_height': [0.75, 's2', None]
+        },
+        {
             'base_wiggle': [0, None, None],
             #'x_wiggle': [1, 's1', None],
             #'y_wiggle': [1, 's2', None],
             'spire_base_width': [0.3, None, None],
-            'spire_base_center': [0.5, None, None],
-            'spire_base_center': [0.2, None, None],
+            'spire_base_center': [0.25, None, None],
             'spire_height': [0.5, 's1', None]
         }
     ]
@@ -158,6 +165,7 @@ class Lightning():
 def SpireDanceV2(frames=frames_default, width=width_default, height=height_default, setup=default_setupV2, **kwargs):
 
     spires = setup.get('spires', [])
+    print(setup)
     images = []
 
     for i in range(0, frames):
@@ -182,10 +190,10 @@ def SpireDanceV2(frames=frames_default, width=width_default, height=height_defau
         hue = int(360 * (sin_N + 1) / 2)
 
         for spire in spires:
-            #print(spire)
+            # print(spire)
             if 'x_wiggle' in spire:
                 x_wiggle = functions.get(spire['x_wiggle'][1], 1) * spire['x_wiggle'][0]
-                print(x_wiggle)
+                # print(x_wiggle)
             else:
                 x_wiggle = 0
             if 'y_wiggle' in spire:
@@ -208,8 +216,8 @@ def SpireDanceV2(frames=frames_default, width=width_default, height=height_defau
                 x_wiggle = spire['x_wiggle'][0] * functions.get(spire['x_wiggle'][1], 1)
             else:
                 x_wiggle = 0'''
-
-            s = SpireV2(width=width, height=height, x_wiggle=x_wiggle, y_wiggle=y_wiggle, spire_height=spire_height, )
+            spire_base_center = spire.get('spire_base_center', 0.5)[0]
+            s = SpireV2(width=width, height=height, x_wiggle=x_wiggle, y_wiggle=y_wiggle, spire_height=spire_height, spire_base_center=spire_base_center)
             draw.polygon(s.polygon(), fill=f"hsl({hue}, 50%, 50%)")
 
         images.append(im.rotate(180))

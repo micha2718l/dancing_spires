@@ -10,11 +10,21 @@ import dancing_spires as ds
 app = Flask(__name__)
 
 #app = Flask(__name__, static_url_path='/spires-nuxt/dist')
-spires_nuxt_path = '/spires-nuxt/dist/'
+spires_nuxt_path = 'spires-nuxt/dist'
 
 @app.route('/<path:path>')
-def send_js(path):
+@app.route('/')
+def send_nuxt(path=None):
+    print(path)
+    if not path:
+        path = 'index.html'
     return send_from_directory(spires_nuxt_path, path)
+
+@app.route('/_nuxt/<path:path>')
+def send__nuxt(path):
+    return send_from_directory(f'{spires_nuxt_path}/_nuxt', path)
+
+
 
 
 @app.route("/spire_dance_custom.gif", methods=['GET', 'POST'])
