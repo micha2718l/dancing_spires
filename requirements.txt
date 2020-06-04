@@ -5,3 +5,4 @@ isort
 yapf
 gunicorn
 Flask
+flask-cors
