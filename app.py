@@ -1,13 +1,16 @@
 
 from pathlib import Path
 import tempfile
+import json
 
 from flask import Flask, send_file, request, send_from_directory
+from flask_cors import CORS
 
 import dancing_spires as ds
 
 
 app = Flask(__name__)
+CORS(app, resources={r'/*': {'origins': '*'}})
 
 #app = Flask(__name__, static_url_path='/spires-nuxt/dist')
 '''
@@ -30,14 +33,17 @@ def send__nuxt(path):
 
 @app.route("/spire_dance_custom.gif", methods=['GET', 'POST'])
 def doom_spire_lightning_custom():
-
     frames = request.args.get('frames', default = ds.frames_default, type = int)
     width = request.args.get('width', default = ds.width_default, type = int)
     height = request.args.get('height', default = ds.height_default, type = int)
     duration = request.args.get('duration', default = ds.duration_default, type = int)
-    setup = request.json if request.json else ds.default_setup
-
-    images = ds.SpireDanceV2(frames=frames, width=width, height=height, **setup)
+    setupStr = request.args.get('setup', default=None)
+    print(json.dumps(setupStr))
+    if setupStr is None:
+        images = ds.SpireDanceV2(frames=frames, width=width, height=height, setup=ds.default_setupV2)
+    else:
+        images = ds.SpireDanceV2(frames=frames, width=width, height=height, setup=json.loads(setupStr))
+    
 
     file_name = "spire_dance_custom.gif"
 
