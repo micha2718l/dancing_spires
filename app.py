@@ -10,6 +10,7 @@ import dancing_spires as ds
 app = Flask(__name__)
 
 #app = Flask(__name__, static_url_path='/spires-nuxt/dist')
+'''
 spires_nuxt_path = 'spires-nuxt/dist'
 
 @app.route('/<path:path>')
@@ -23,7 +24,7 @@ def send_nuxt(path=None):
 @app.route('/_nuxt/<path:path>')
 def send__nuxt(path):
     return send_from_directory(f'{spires_nuxt_path}/_nuxt', path)
-
+'''
 
 
 
