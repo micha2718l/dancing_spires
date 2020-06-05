@@ -27,6 +27,7 @@ default_setup = {
 }
 
 default_setupV2 = {
+    "flash_0": 15,"flash_1": 25,
     'functions': [
         {'name': 's1',
          'function': 'sin',
@@ -165,7 +166,13 @@ class Lightning():
 def SpireDanceV2(frames=frames_default, width=width_default, height=height_default, setup=default_setupV2, **kwargs):
 
     spires = setup.get('spires', [])
-    print(setup)
+    flash_0 = setup.get('flash_0', frames + 2)
+    if flash_0 == 0:
+        flash_0 = frames + 2
+    flash_1 = setup.get('flash_1', frames + 2)
+    if flash_1 == 0:
+        flash_1 = frames + 2
+    #print(setup)
     images = []
 
     for i in range(0, frames):
@@ -179,9 +186,10 @@ def SpireDanceV2(frames=frames_default, width=width_default, height=height_defau
         sin_N = np.sin(2 * N * 2 * np.pi)
         sin_N3 = np.sin(2 * 3 * N * 2 * np.pi)
         sin_N5 = np.sin(7 * N * 2 * np.pi)
-
-        if (i % 2 == 0 and i % 5 == 0):
+        print(flash_0)
+        if ((i+1) % flash_0 == 0 or (i+1) % flash_1 == 0):
             color = color_lightning
+            print(i)
         else:
             color = color_bg
 

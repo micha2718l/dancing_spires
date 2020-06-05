@@ -38,7 +38,7 @@ def doom_spire_lightning_custom():
     height = request.args.get('height', default = ds.height_default, type = int)
     duration = request.args.get('duration', default = ds.duration_default, type = int)
     setupStr = request.args.get('setup', default=None)
-    print(json.dumps(setupStr))
+    #print(json.dumps(setupStr))
     if setupStr is None:
         images = ds.SpireDanceV2(frames=frames, width=width, height=height, setup=ds.default_setupV2)
     else:
