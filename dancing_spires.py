@@ -27,7 +27,7 @@ default_setup = {
 }
 
 default_setupV2 = {
-    "flash_0": 15,"flash_1": 25,
+    "flash_0": 15,"flash_1": 10,
     'functions': [
         {'name': 's1',
          'function': 'sin',
@@ -212,6 +212,10 @@ def SpireDanceV2(frames=frames_default, width=width_default, height=height_defau
                 spire_height = spire['spire_height'][0] + functions.get(spire['spire_height'][1], 1) * spire['spire_height'][0]
             else:
                 spire_height = None
+            if 'spire_base_width' in spire:
+                spire_base_width = spire['spire_base_width'][0] + functions.get(spire['spire_base_width'][1], 1) * spire['spire_base_width'][0]
+            else:
+                spire_height = None
             '''if 'x_wiggle' in spire:
                 x_wiggle = spire['x_wiggle'][0] * functions.get(spire['x_wiggle'][1], 1)
             else:
@@ -225,7 +229,13 @@ def SpireDanceV2(frames=frames_default, width=width_default, height=height_defau
             else:
                 x_wiggle = 0'''
             spire_base_center = spire.get('spire_base_center', 0.5)[0]
-            s = SpireV2(width=width, height=height, x_wiggle=x_wiggle, y_wiggle=y_wiggle, spire_height=spire_height, spire_base_center=spire_base_center)
+            s = SpireV2(width=width,
+                        height=height,
+                        x_wiggle=x_wiggle,
+                        y_wiggle=y_wiggle,
+                        spire_height=spire_height,
+                        spire_base_center=spire_base_center,
+                        spire_base_width=spire_base_width)
             draw.polygon(s.polygon(), fill=f"hsl({hue}, 50%, 50%)")
 
         images.append(im.rotate(180))
